@@ -16,7 +16,8 @@ in the event that this fails.
                        // everything outside \x20 to \x7E being banned.)
 
 Detailed breakdown:
-http://stackoverflow.com/questions/1969232/allowed-characters-in-cookies/1969339#1969339
+<http://stackoverflow.com/questions/1969232/allowed-characters-in-cookies/1969339#1969339>
+
 -}
 illegalValueChar : Regex
 illegalValueChar =
@@ -32,7 +33,7 @@ illegalKeyChar =
     Regex.regex "[^a-zA-Z0-9!#$%&'*+-.^_`|~]"
 
 
-{-| I started out by reading http://stackoverflow.com/questions/1969232/allowed-characters-in-cookies/1969339#1969339
+{-| I started out by reading <http://stackoverflow.com/questions/1969232/allowed-characters-in-cookies/1969339#1969339>
 which says "in practice you cannot use non-ASCII characters in cookies at all."
 
 I did some experiments with this to see what different browsers would send.
@@ -54,6 +55,7 @@ allowing even Extended ASCII characters results in inconsistent behavior
 cross-browser, so we should not allow it.
 
 -@rtfeldman
+
 -}
 valueError : String -> String
 valueError str =
@@ -63,18 +65,18 @@ valueError str =
                 |> Regex.find Regex.All illegalValueChar
                 |> List.map .match
     in
-        String.concat
-            [ "For reliable cross-browser cookie setting, "
-            , "cookie values may only contain Standard ASCII letters, numbers, "
-            , "and the following special characters:\n\n"
-            , "!#$%&'()*+-./:<=>?@[]^_`{|}~"
-            , "Using encodeURIComponent may help here!\n\n"
-            , "See http://stackoverflow.com/a/1969339 for further explanation.\n"
-            , "Unsupported character sequences: "
-            , toString matches
-            , "\n\nOriginal value: "
-            , str
-            ]
+    String.concat
+        [ "For reliable cross-browser cookie setting, "
+        , "cookie values may only contain Standard ASCII letters, numbers, "
+        , "and the following special characters:\n\n"
+        , "!#$%&'()*+-./:<=>?@[]^_`{|}~"
+        , "Using encodeURIComponent may help here!\n\n"
+        , "See http://stackoverflow.com/a/1969339 for further explanation.\n"
+        , "Unsupported character sequences: "
+        , toString matches
+        , "\n\nOriginal value: "
+        , str
+        ]
 
 
 keyError : String -> String
@@ -85,18 +87,18 @@ keyError str =
                 |> Regex.find Regex.All illegalKeyChar
                 |> List.map .match
     in
-        String.concat
-            [ "For reliable cross-browser cookie setting, "
-            , "cookie keys may only contain Standard ASCII letters, numbers, "
-            , "and the following special characters:\n\n"
-            , "!#$%&'*+-.^_`|~"
-            , "Using encodeURIComponent may help here!\n\n"
-            , "See http://stackoverflow.com/a/1969339 for further explanation.\n"
-            , "Unsupported character sequences: "
-            , toString matches
-            , "\n\nOriginal value: "
-            , str
-            ]
+    String.concat
+        [ "For reliable cross-browser cookie setting, "
+        , "cookie keys may only contain Standard ASCII letters, numbers, "
+        , "and the following special characters:\n\n"
+        , "!#$%&'*+-.^_`|~"
+        , "Using encodeURIComponent may help here!\n\n"
+        , "See http://stackoverflow.com/a/1969339 for further explanation.\n"
+        , "Unsupported character sequences: "
+        , toString matches
+        , "\n\nOriginal value: "
+        , str
+        ]
 
 
 emptyKeyError : String
@@ -113,7 +115,7 @@ key : String -> Maybe String
 key str =
     if String.isEmpty str then
         Just emptyKeyError
-    else if (Regex.contains illegalKeyChar str) then
+    else if Regex.contains illegalKeyChar str then
         Just (keyError str)
     else
         Nothing
@@ -121,7 +123,7 @@ key str =
 
 value : String -> Maybe String
 value str =
-    if (Regex.contains illegalValueChar str) then
+    if Regex.contains illegalValueChar str then
         Just (valueError str)
     else
         Nothing

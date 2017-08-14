@@ -3,16 +3,17 @@ module Cookie.LowLevel exposing (get, set)
 {-| Low-level bindings to the JavaScript API for cookies. Generally you want
 to use the `Cookie` module, not `Cookie.LowLevel`.
 
+
 # Get and Set Cookies
+
 @docs get, set
+
 -}
-
-import Task exposing (Task)
-
 
 -- Local modules.
 
 import Native.Cookie
+import Task exposing (Task)
 
 
 {-| Get the contents of `document.cookie` as a string.
@@ -23,6 +24,7 @@ information that is not better covered by [local-storage][local] and
 
 [local]: http://package.elm-lang.org/packages/elm-lang/local-storage/latest
 [session]: http://package.elm-lang.org/packages/elm-lang/session-storage/latest
+
 -}
 get : Task x String
 get =
@@ -36,6 +38,7 @@ Instead of setting options individually, you provide a string like this:
 
 This gives you a safety valve in case you ever have to set a new option that
 is not covered by the `Cookie` module.
+
 -}
 set : String -> Task x ()
 set =

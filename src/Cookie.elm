@@ -1,13 +1,14 @@
 module Cookie
     exposing
-        ( get
-        , set
+        ( Error
         , Options
-        , Error
+        , get
+        , set
         )
 
 {-| Be sure to read the README first. There is some important background
 material there.
+
 
 # Example
 
@@ -38,21 +39,21 @@ The important part is the `options` record. It is saying:
 
 You may want to make other choices to further restrict things.
 
+
 # The Documentation
+
 @docs get, set, Options, Error
 
 -}
 
-import Date exposing (Date)
-import Dict
-import List
-import Task exposing (Task)
-import String
-
-
 -- Local modules.
 
 import Cookie.LowLevel as LL
+import Date exposing (Date)
+import Dict
+import List
+import String
+import Task exposing (Task)
 
 
 {-| Setting cookies may fail for reasons including:
@@ -64,6 +65,7 @@ import Cookie.LowLevel as LL
 
 The `Error` type will tell you generally what kind of problem you have with
 a more specific error message to really pin things down.
+
 -}
 type Error
     = BadKey String
@@ -100,24 +102,25 @@ get key =
                    Task.map (List.map (Maybe.withDefault ( "", Ok "" )))
                 |> Task.map Dict.fromList
     in
-        cookieDictTask
-            `Task.andThen`
-                \cookieDict ->
-                    let
-                        maybeResult =
-                            Dict.get key cookieDict
-                    in
-                        case maybeResult of
-                            Just result ->
-                                case result of
-                                    Ok value ->
-                                        Task.succeed value
+    cookieDictTask
+        |> Task.andThen
+            (\cookieDict ->
+                let
+                    maybeResult =
+                        Dict.get key cookieDict
+                in
+                case maybeResult of
+                    Just result ->
+                        case result of
+                            Ok value ->
+                                Task.succeed value
 
-                                    Err error ->
-                                        Task.fail error
+                            Err error ->
+                                Task.fail error
 
-                            Nothing ->
-                                Task.fail <| NonExistantKey key
+                    Nothing ->
+                        Task.fail <| NonExistantKey key
+            )
 
 
 isNothing : Maybe a -> Bool
@@ -136,6 +139,7 @@ Shouldn't ever return `Nothing` (although the type system allows for this).
 
 If the `<cookie-name>=<cookie-value>` string is malformed and no `<cookie-value>` can be extracted,
 returns `Just (<cookie-name>, Nothing)`.
+
 -}
 splitKeyValue : String -> Maybe ( String, Result Error String )
 splitKeyValue s =
@@ -149,23 +153,23 @@ splitKeyValue s =
         maybeValue =
             Maybe.map (String.join "") (List.tail parts)
     in
-        case maybeName of
-            Just name ->
-                case maybeValue of
-                    Just value ->
-                        Just ( name, Ok value )
+    case maybeName of
+        Just name ->
+            case maybeValue of
+                Just value ->
+                    Just ( name, Ok value )
 
-                    Nothing ->
-                        let
-                            error =
-                                MalformedKeyValue <|
-                                    "Cannot extract `<cookie-value>` from `<cookie-name>=<cookie-value>` pair: "
-                                        ++ s
-                        in
-                            Just ( name, Err error )
+                Nothing ->
+                    let
+                        error =
+                            MalformedKeyValue <|
+                                "Cannot extract `<cookie-value>` from `<cookie-name>=<cookie-value>` pair: "
+                                    ++ s
+                    in
+                    Just ( name, Err error )
 
-            Nothing ->
-                Nothing
+        Nothing ->
+            Nothing
 
 
 {-| Set a key-value pair. So if you perform the following task on a page with
@@ -179,6 +183,7 @@ The following header would be added to every request to your servers:
 
 As you `set` more cookies, that `Cookie` header would get more and more stuff
 in it.
+
 -}
 set : Options -> String -> String -> Task Error ()
 set options key value =
@@ -194,7 +199,7 @@ set options key value =
                 ""
             ]
     in
-        LL.set (String.concat chunks)
+    LL.set (String.concat chunks)
 
 
 format : String -> (a -> String) -> Maybe a -> String
@@ -221,7 +226,7 @@ cookie.
 
 If it is not set, it defaults to the broadest domain. So if you are on
 `downloads.example.org` it would be set to `example.org`. This means the
-cookie would be available on *any* subdomain.
+cookie would be available on _any_ subdomain.
 
 The **`path`** field lets you restrict which pages can see your cookie.
 
