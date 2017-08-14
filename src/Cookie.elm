@@ -26,7 +26,7 @@ like this:
     options =
       { domain = Nothing
       , path = Nothing
-      , maxAge = Just (7 * 24 * Time.hour)
+      , maxAge = Just (7 * 24 * 60 * 60)
       , secure = True
       }
 
@@ -49,7 +49,6 @@ You may want to make other choices to further restrict things.
 -- Local modules.
 
 import Cookie.LowLevel as LL
-import Date exposing (Date)
 import Dict
 import List
 import String
@@ -214,7 +213,7 @@ format prefix styler option =
 
 {-| When setting cookies, there are a few options you can tweak:
 
-The **`maxAge`** field specifies when the cookie should expire.
+The **`maxAge`** field specifies when the cookie should expire in seconds from now.
 
 If this is not specified, the cookie expires at the end of the session.
 
@@ -241,7 +240,7 @@ with `/`.
 
 -}
 type alias Options =
-    { maxAge : Maybe Date
+    { maxAge : Maybe Int
     , secure : Bool
     , domain : Maybe String
     , path : Maybe String
